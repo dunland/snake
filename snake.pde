@@ -6,7 +6,7 @@ TODO:
 ..vertikale Linien vs horizontale
 ....Verbindungskurven
 ..Bezier-Halbkreise mit Radius r
-....Radius muss immer 65° haben
+....Radius muss immer 65cm haben
 ....doppelte Linien: Linienklasse erstellen, vertikaler Versatz der Linien, Vorzeichenwechsel bei Erstellung neuen Bogens
 ..Benennung Maßeinheiten Wand
 ..Einfügen eines technischen Bildes
@@ -14,6 +14,7 @@ TODO:
 ....Liste aller Punkte, draggable
 ....Einstellung Maßeinheiten
 ....export-Button
+....globalVerboseLevel keyboard control
 */
 
 import processing.dxf.*;
@@ -21,6 +22,7 @@ import uibooster.*;
 
 boolean record;
 int punktAbstand_x = 65, punktAbstand_y = 65;
+int globalVerboseLevel = 1;
 
 // Punktlisten:
 ArrayList<GitterPunkt> gitterpunkte = new ArrayList<GitterPunkt>();
@@ -81,6 +83,7 @@ void draw()
             }
 
             // Punkte auf unterschiedlicher Höhe: Kurve zeichnen
+            // ein Punkt über dem anderen:
             else
             {
                 if (i >= 2 && aktive_gitterpunkte.size() > 2)
@@ -89,45 +92,53 @@ void draw()
 
                     noFill();
                     int angle = 180;
-                    float radius = (gp.y - gp_vorher.y) / 2;
+                    float radius = 65/2;
                     float length = 4 * tan(radians(angle / 4)) / 3;
+
+                    // Kurve rechts:
                     if (gp_vorletzter.x < gp.x)
                     {
-                        // rechtsbündig; direkt übereinander:
-                        stroke(255);
-                        bezier(gp.x, gp.y, gp.x + punktAbstand_x, gp.y, gp_vorher.x + punktAbstand_x, gp_vorher.y, gp_vorher.x, gp_vorher.y);
-                        stroke(255,0,0);
-                        bezier(gp.x, gp.y + y_versatz, gp.x + punktAbstand_x, gp.y + y_versatz, gp_vorher.x + punktAbstand_x, gp_vorher.y - y_versatz, gp_vorher.x, gp_vorher.y - y_versatz);
-                        stroke(255);
-                        bezier(gp.x, gp.y + y_versatz, gp.x + punktAbstand_x, gp.y + y_versatz, gp_vorher.x + punktAbstand_x, gp_vorher.y - y_versatz, gp_vorher.x, gp_vorher.y - y_versatz);
-                        // PVector start = new PVector(gp.x, gp.y);
-                        // PVector ctrl1 = new PVector(gp.x + radius * length, gp.y);
-                        // PVector ctrl2 = new PVector(ctrl1.y, ctrl1.x);
-                        // PVector end = new PVector(gp_vorher.x, gp_vorher.y);
+                        PVector start = new PVector(gp.x, gp.y);
+                        PVector ctrl1 = new PVector(gp.x + (radius * length), gp.y);
+                        PVector ctrl2 = new PVector(gp_vorher.x + (radius * length), gp_vorher.y);
+                        PVector end = new PVector(gp_vorher.x, gp_vorher.y);
 
-                        // bezier(start.x, start.y,
-                        //     ctrl1.x, ctrl1.y,
-                        //     ctrl2.x, ctrl2.y,
-                        //     end.x, end.y);
+                        bezier(start.x, start.y,
+                            ctrl1.x, ctrl1.y,
+                            ctrl2.x, ctrl2.y,
+                            end.x, end.y);
+
+                        // Kontrollpunkte:
+                        if (globalVerboseLevel > 0)
+                          {
+                        noStroke();
+                        fill(193, 96, 118);
+                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
+                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
+                        }
 
                     }
                     else
                     {
-                        // linksbündig; direkt übereinander:
-                        bezier(gp.x,gp.y, gp.x - punktAbstand_x, gp.y, gp_vorher.x - punktAbstand_x, gp_vorher.y, gp_vorher.x, gp_vorher.y);
-                        // PVector start = new PVector(0, - radius);
-                        // PVector ctrl1 = new PVector(radius * length, - radius);
-                        // PVector ctrl2 = new PVector(- radius * length, - radius);
-                        // PVector end  = new PVector(0, - radius);
+                        // Kurve links:
+                        PVector start = new PVector(gp.x, gp.y);
+                        PVector ctrl1 = new PVector(gp.x - (radius * length), gp.y);
+                        PVector ctrl2 = new PVector(gp_vorher.x - (radius * length), gp_vorher.y);
+                        PVector end = new PVector(gp_vorher.x, gp_vorher.y);
 
-                        // ctrl2.rotate(radians(angle));
-                        // end.rotate(radians(angle));
+                        bezier(start.x, start.y,
+                            ctrl1.x, ctrl1.y,
+                            ctrl2.x, ctrl2.y,
+                            end.x, end.y);
 
-                        // // translate(gp_vorher.x, gp_vorher.y + (radius));
-                        // bezier(start.x, start.y,
-                        //     ctrl1.x, ctrl1.y,
-                        //     ctrl2.x, ctrl2.y,
-                        //     end.x, end.y);
+                        // Kontrollpunkte:
+                        if (globalVerboseLevel > 0)
+                          {
+                        noStroke();
+                        fill(193, 96, 118);
+                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
+                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
+                        }
                     }
                 }
             }
