@@ -35,7 +35,7 @@ ArrayList<Linie> linien = new ArrayList<Linie>();
 void setup()
 {
         // Grafikeinstellungen:
-        size(800, 500, P2D);
+        size(800, 500);
 
         ellipseMode(CENTER);
 
@@ -72,7 +72,7 @@ void draw()
 
                 for (int i = 1; i < aktive_gitterpunkte.size(); i++)
                 {
-                        linien.get(i).render();
+                        linien.get(i-1).render();
 
                         // Punkte auf unterschiedlicher Höhe: Kurve zeichnen
                         // ein Punkt über dem anderen:
@@ -174,7 +174,6 @@ void mouseClicked()
 
                                 if (aktive_gitterpunkte.size() > 1)
                                 {
-
                                         GitterPunkt gp_vorher = gitterpunkte.get(i-1);
                                         linien.add(new Linie(gp_vorher.x, gp_vorher.y, gp.x, gp.y));
                                 }
