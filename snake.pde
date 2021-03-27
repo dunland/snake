@@ -7,6 +7,7 @@
    ....vertikale Linien: Verbindungsbögen
    ..Benennung Maßeinheiten Wand
    ..Einfügen eines technischen Bildes
+   ..Segmentierung des dxf-Exportes
    ..UI:
    ....Liste aller Punkte, draggable
    ....Einstellung Maßeinheiten
@@ -24,6 +25,9 @@ int globalVerboseLevel = 0;
 // Punktlisten:
 ArrayList<GitterPunkt> gitterpunkte = new ArrayList<GitterPunkt>();
 ArrayList<GitterPunkt> aktive_gitterpunkte = new ArrayList<GitterPunkt>();
+
+// Liniensegmente:
+ArrayList<Liniensegment> liniensegmente = new ArrayList<Liniensegment>();
 
 void setup()
 {
@@ -60,150 +64,10 @@ void draw()
 
         // Formen zeichnen:
         // zeichne Linie durch alle aktiven Gitterpunkte:
-        if (aktive_gitterpunkte.size() > 1)
-        {
+        // if (liniensegmente.size() > 1)
+        for (Liniensegment ls : liniensegmente)
+                ls.render();
 
-                for (int i = 1; i < aktive_gitterpunkte.size(); i++)
-                {
-                        GitterPunkt gp = aktive_gitterpunkte.get(i);
-                        GitterPunkt gp_vorher = aktive_gitterpunkte.get(i - 1);
-
-                        // Punkte auf gleicher Höhe: Linie zeichnen
-                        if (gp.y == gp_vorher.y)
-                        {
-                                stroke(255);
-                                line(gp.x,gp.y, gp_vorher.x, gp_vorher.y);
-                                // obere linie:
-                                line(gp.x, gp.y - 10, gp_vorher.x, gp_vorher.y - 10);
-                                // untere Linie:
-                                line(gp.x, gp.y + 10, gp_vorher.x, gp_vorher.y + 10);
-                        }
-
-                        // Punkte auf unterschiedlicher Höhe: Kurve zeichnen
-                        // ein Punkt über dem anderen:
-                        else
-                        {
-                                if (i >= 2 && aktive_gitterpunkte.size() > 2)
-                                {
-                                        GitterPunkt gp_vorletzter = aktive_gitterpunkte.get(i - 2);
-
-                                        noFill();
-                                        int angle = 180;
-                                        float radius = 65/2;
-                                        float length = 4 * tan(radians(angle / 4)) / 3;
-
-                                        // Kurve rechts:
-                                        if (gp_vorletzter.x < gp.x)
-                                        {
-                                                // weiße Linie:
-                                                PVector start = new PVector(gp.x, gp.y);
-                                                PVector ctrl1 = new PVector(gp.x + (radius * length), gp.y);
-                                                PVector ctrl2 = new PVector(gp_vorher.x + (radius * length), gp_vorher.y);
-                                                PVector end = new PVector(gp_vorher.x, gp_vorher.y);
-
-                                                stroke(255);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // äußere Linie:
-                                                radius = 85/2;
-                                                length = 4 * tan(radians(angle / 4)) / 3;
-
-                                                start = new PVector(gp.x, gp.y - 10);
-                                                ctrl1 = new PVector(gp.x + (radius * length), gp.y - 10);
-                                                ctrl2 = new PVector(gp_vorher.x + (radius * length), gp_vorher.y + 10);
-                                                end = new PVector(gp_vorher.x, gp_vorher.y + 10);
-
-                                                // stroke(0,0,255);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // innere Linie:
-                                                radius = 45/2;
-                                                length = 4 * tan(radians(angle / 4)) / 3;
-
-                                                start = new PVector(gp.x, gp.y + 10);
-                                                ctrl1 = new PVector(gp.x + (radius * length), gp.y + 10);
-                                                ctrl2 = new PVector(gp_vorher.x + (radius * length), gp_vorher.y - 10);
-                                                end = new PVector(gp_vorher.x, gp_vorher.y - 10);
-
-                                                // stroke(255,0,0);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // Kontrollpunkte:
-                                                if (globalVerboseLevel > 0)
-                                                {
-                                                        noStroke();
-                                                        fill(193, 96, 118);
-                                                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
-                                                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
-                                                }
-
-                                        }
-                                        else
-                                        {
-                                                // Kurve links:
-                                                PVector start = new PVector(gp.x, gp.y);
-                                                PVector ctrl1 = new PVector(gp.x - (radius * length), gp.y);
-                                                PVector ctrl2 = new PVector(gp_vorher.x - (radius * length), gp_vorher.y);
-                                                PVector end = new PVector(gp_vorher.x, gp_vorher.y);
-
-                                                stroke(255);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // äußere linie:
-                                                radius = 85/2;
-                                                length = 4 * tan(radians(angle / 4)) / 3;
-
-                                                start = new PVector(gp.x, gp.y-10);
-                                                ctrl1 = new PVector(gp.x - (radius * length), gp.y-10);
-                                                ctrl2 = new PVector(gp_vorher.x - (radius * length), gp_vorher.y+10);
-                                                end = new PVector(gp_vorher.x, gp_vorher.y+10);
-
-                                                // stroke(0,0,255);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // innere linie:
-                                                radius = 45/2;
-                                                length = 4 * tan(radians(angle / 4)) / 3;
-
-                                                start = new PVector(gp.x, gp.y+10);
-                                                ctrl1 = new PVector(gp.x - (radius * length), gp.y+10);
-                                                ctrl2 = new PVector(gp_vorher.x - (radius * length), gp_vorher.y-10);
-                                                end = new PVector(gp_vorher.x, gp_vorher.y-10);
-
-                                                // stroke(255,0,0);
-                                                bezier(start.x, start.y,
-                                                       ctrl1.x, ctrl1.y,
-                                                       ctrl2.x, ctrl2.y,
-                                                       end.x, end.y);
-
-                                                // Kontrollpunkte:
-                                                if (globalVerboseLevel > 0)
-                                                {
-                                                        noStroke();
-                                                        fill(193, 96, 118);
-                                                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
-                                                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
-                                                }
-                                        }
-                                }
-                        }
-                }
-        }
 
         //DXF Aufnahme beenden:
         if (record)
@@ -218,28 +82,58 @@ void draw()
 void keyPressed()
 {
         //exportiere DXF mit Taste 'r':
-        if (key == 'r')
+        if (key == 'R')
         {
                 record = true;
         }
+        if (key == 'W')
+        {
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBEN";
+        }
+        if (key == 'A')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_LINKS";
+        if (key == 'S')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTEN";
+        if (key == 'D')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
+        if (key == 'q')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
+        if (key == 'e')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
+        if (key == 'Y')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
+        if (key == 'X')
+                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
+
+
 }
 
 // Mausklick:
 void mouseClicked()
 {
         //Gitterpunkt an Stelle der Maus auswählen:
-        for (GitterPunkt gp : gitterpunkte)
+        for (int i = 0; i<gitterpunkte.size(); i++)
         {
+                GitterPunkt gp = gitterpunkte.get(i);
                 if ((mouseX > gp.x - gp.x_toleranz && mouseX < gp.x + gp.x_toleranz) && mouseY > gp.y - gp.y_toleranz && mouseY < gp.y + gp.y_toleranz)
                 {
                         gp.aktiv = !gp.aktiv;
                         if (gp.aktiv)
                         {
                                 aktive_gitterpunkte.add(gp);
+                                // neues Liniensegment:
+                                if (aktive_gitterpunkte.size() > 1)
+                                {
+                                        GitterPunkt gp_vorher = aktive_gitterpunkte.get(aktive_gitterpunkte.size() - 2);
+                                        liniensegmente.add(new Liniensegment(gp.x, gp.y, gp_vorher.x, gp_vorher.y));
+                                        // TODO: gp.linie = zuletzt erstelle Linie
+                                }
                         }
                         else
                         {
                                 aktive_gitterpunkte.remove(gp);
+                                // entferne Liniensegment:
+                                // TODO: alle aktiven gps müssen zugeordnete linie haben → entferne diese linie
                         }
                 }
         }
