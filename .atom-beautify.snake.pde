@@ -89,21 +89,13 @@ void keyPressed()
         if (key == 'W')
         {
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBEN";
-        }
+              }
         if (key == 'A')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_LINKS";
         if (key == 'S')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTEN";
-        if (key == 'D')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
-        if (key == 'Q')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBENLINKS";
-        if (key == 'E')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBENRECHTS";
-        if (key == 'Y')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTENLINKS";
-        if (key == 'X')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTENRECHTS";
+                if (key == 'D')
+                        liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
 
 
 }

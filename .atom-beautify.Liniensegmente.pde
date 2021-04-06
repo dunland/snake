@@ -92,7 +92,7 @@ void render(){
                 break;
         case "KURVE_LINKS":
 
-                radius = 65/2;
+                radius = (y1>y2) ? 65/2 : 85/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
                 // mittlere Linie:
@@ -108,7 +108,7 @@ void render(){
                        end.x, end.y);
 
                 // äußere linie:
-                radius = (y1 < y2) ? 85/2 : 45/2;
+                radius = 45/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
                 start = new PVector(x1, y1-10);
@@ -122,7 +122,7 @@ void render(){
                        end.x, end.y);
 
                 // innere linie:
-                radius = (y1 > y2) ? 85/2 : 45/2;
+                radius = 85/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
                 start = new PVector(x1, y1+10);
@@ -146,10 +146,10 @@ void render(){
                 }
                 break;
         case "KURVE_RECHTS":
-                // mittlere Linie:
                 radius = 65/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
+                // mittlere Linie:
                 start = new PVector(x1, y1);
                 ctrl1 = new PVector(x1 + (radius * length), y1);
                 ctrl2 = new PVector(x2 + (radius * length), y2);
@@ -162,7 +162,7 @@ void render(){
                        end.x, end.y);
 
                 // äußere Linie:
-                radius = (y1 < y2) ? 85/2 : 45/2;
+                radius = 45/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
                 start = new PVector(x1, y1 - 10);
@@ -176,7 +176,7 @@ void render(){
                        end.x, end.y);
 
                 // innere Linie:
-                radius = (y1 > y2) ? 85/2 : 45/2;
+                radius = 85/2;
                 length = 4 * tan(radians(angle / 4)) / 3;
 
                 start = new PVector(x1, y1 + 10);
@@ -197,45 +197,6 @@ void render(){
                         ellipse(ctrl1.x, ctrl1.y, 20, 20);
                         ellipse(ctrl2.x, ctrl2.y, 20, 20);
                 }
-                break;
-
-        case "KURVE_OBENLINKS":
-                angle = 90;
-                // mittlere Linie:
-                radius = 65;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1 - (radius * length), y1 );
-                ctrl2 = new PVector(x2, y2 - (radius * length));
-                end = new PVector(x2, y2);
-
-                bezier(start.x, start.y,
-                       ctrl1.x, ctrl1.y,
-                       ctrl2.x, ctrl2.y,
-                       end.x, end.y);
-
-                break;
-
-        case "KURVE_OBENRECHTS":
-                angle = 90;
-                // mittlere Linie:
-                radius = 65;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1 + (radius * length), y1 );
-                ctrl2 = new PVector(x2, y2 - (radius * length));
-                end = new PVector(x2, y2);
-
-                bezier(start.x, start.y,
-                       ctrl1.x, ctrl1.y,
-                       ctrl2.x, ctrl2.y,
-                       end.x, end.y);
-                break;
-        case "KURVE_UNTENLINKS":
-                break;
-        case "KURVE_UNTENRECHTS":
                 break;
         default:
                 break;
