@@ -2,6 +2,11 @@ class Liniensegment {
 
 int x1, y1, x2, y2;
 String typ = ""; // mögliche Typen: "HORIZONTALE", "VERTIKALE", "KURVE_UNTEN", "KURVE_OBEN", "KURVE_LINKS", "KURVE_RECHTS"
+PVector start, ctrl1, ctrl2, end;
+int angle = 180;
+float radius = 180;
+float length = 4 * tan(radians(angle / 4)) / 3;
+
 
 Liniensegment(int x1_, int y1_, int x2_, int y2_){
         x1 = x1_;
@@ -14,34 +19,307 @@ Liniensegment(int x1_, int y1_, int x2_, int y2_){
 
 }
 
-// Zuordnung des Kurventyps:
+//////////////////////////// Zuordnung des Kurventyps //////////////////////////
 void typ_zuordnung()
 {
 
-        // gerade Linien:
+        // --------------------------- gerade Linien: --------------------------
         if (y1 == y2) typ = "HORIZONTALE";
         else if (x1 == x2) typ = "VERTIKALE";
 
-        // Kurven:
-        // if (liniensegmente.size() > 1)
-        // {
-        //         GitterPunkt gp_vorletzter = aktive_gitterpunkte.get(aktive_gitterpunkte.size() - 3);
-        //         Liniensegment linie_vorher = liniensegmente.get(liniensegmente.size() - 2);
-        //
-        //         if (y1 == y2 && x1 != x2 && gp_vorletzter.y < y2 && linie_vorher.typ.equals("VERTIKALE")) typ = "KURVE_UNTEN";
-        //         if (y1 == y2 && x1 != x2 && gp_vorletzter.y > y2 && linie_vorher.typ.equals("VERTIKALE")) typ = "KURVE_OBEN";
-        //         if (y1 != y2 && gp_vorletzter.x > x1 && linie_vorher.typ.equals("HORIZONTALE")) typ = "KURVE_LINKS";
-        //         if (y1 != y2 && gp_vorletzter.x < x1 && linie_vorher.typ.equals("HORIZONTALE")) typ = "KURVE_RECHTS";
-        // }
+        // ------------------------------ Kurven: ------------------------------
+        // KURVE OBEN LINKS; nach oben:
+        else if (x1 > x2 && y1 < y2)
+        {
+                typ = "KURVE_OBENLINKS";
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1 - (radius * length), y1 );
+                ctrl2 = new PVector(x2, y2 - (radius * length));
+                end = new PVector(x2, y2);
+        }
+
+        // KURVE OBEN LINKS; nach unten:
+        else if (x1 < x2 && y1 > y2)
+        {
+                typ = "KURVE_OBENLINKS";
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1, y1 - (radius * length));
+                ctrl2 = new PVector(x2 - (radius * length), y2);
+                end = new PVector(x2, y2);
+        }
+
+        // oben rechts, von oben kommend:
+        else if (x2 < x1 && y2 < y1)
+        {
+                typ = "KURVE_OBENRECHTS";
+                println("oben rechts von oben kommend");
+
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1, y1 - (radius * length));
+                ctrl2 = new PVector(x2 + (radius * length), y2);
+                end = new PVector(x2, y2);
+        }
+
+        // oben rechts, von unten kommend:
+        else if (x2 > x1 && y2 > y1)
+        {
+                typ = "KURVE_OBENRECHTS";
+                println("oben rechts von unten kommend");
+
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1 + (radius * length), y1 );
+                ctrl2 = new PVector(x2, y2 - (radius * length));
+                end = new PVector(x2, y2);
+        }
+
+        // unten links, von unten kommend:
+        else if (x2 > x1 && y2 > y1)
+        {
+                typ = "KURVE_UNTENLINKS";
+                println("unten links von unten kommend");
+
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1, y1 + (radius * length));
+                ctrl2 = new PVector(x2 - (radius * length), y2);
+                end = new PVector(x2, y2);
+        }
+
+        // unten links, von oben kommend:
+        else if (x2 < x1 && y2 < y1)
+        {
+                typ = "KURVE_UNTENLINKS";
+                println("unten links von oben kommend");
+
+                angle = 90;
+                // mittlere Linie:
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1 - (radius * length), y1 );
+                ctrl2 = new PVector(x2, y2 + (radius * length));
+                end = new PVector(x2, y2);
+        }
+
+        // unten rechts:
+        else if (x1 > x2 && y1 < y2)
+        {
+                typ = "KURVE_UNTENRECHTS";
+                println("unten rechts von unten kommend");
+
+                angle = 90;
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1 + (radius * length), y1 );
+                ctrl2 = new PVector(x2, y2 + (radius * length));
+                end = new PVector(x2, y2);
+        }
+        else if (x1 < x2 && y1 > y2)
+        {
+                typ = "KURVE_UNTENRECHTS";
+                println("unten rechts von oben kommend");
+
+                angle = 90;
+                radius = 65;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1 + (radius * length), y1 );
+                ctrl2 = new PVector(x2, y2 + (radius * length));
+                end = new PVector(x2, y2);
+        }
 
         println("neue Linie des Typs " + typ + ":\n" + x1 + "|" + y1 + "\t" + x2 + "|" + y2);
 }
 
+void set_type(String type_)
+{
+        typ = type_;
+        switch (typ)
+        {
+        case "KURVE_OBEN":
+                radius = 65/2;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1, y1 - (radius * length));
+                ctrl2 = new PVector(x2, y2 - (radius * length));
+                end = new PVector(x2, y2);
+                break;
+
+        case "KURVE_UNTEN":
+                radius = 65/2;
+                length = 4 * tan(radians(angle / 4)) / 3;
+
+                start = new PVector(x1, y1);
+                ctrl1 = new PVector(x1, y1 + (radius * length));
+                ctrl2 = new PVector(x2, y2 + (radius * length));
+                end = new PVector(x2, y2);
+                break;
+
+        case "KURVE_OBENLINKS":
+
+                if (x1 > x2 && y1 < y2)
+                {
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1 - (radius * length), y1 );
+                        ctrl2 = new PVector(x2, y2 - (radius * length));
+                        end = new PVector(x2, y2);
+                }
+                else if (x1 < x2 && y1 > y2)
+                {
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1, y1 - (radius * length));
+                        ctrl2 = new PVector(x2 - (radius * length), y2);
+                        end = new PVector(x2, y2);
+                }
+                break;
+
+        case "KURVE_OBENRECHTS":
+                // oben rechts, von oben kommend:
+                if (x2 < x1 && y2 < y1)
+                {
+                        println("oben rechts von oben kommend");
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1, y1 - (radius * length));
+                        ctrl2 = new PVector(x2 + (radius * length), y2);
+                        end = new PVector(x2, y2);
+                }
+
+                // oben rechts, von unten kommend:
+                else if (x2 > x1 && y2 > y1)
+                {
+                        println("oben rechts von unten kommend");
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1 + (radius * length), y1 );
+                        ctrl2 = new PVector(x2, y2 - (radius * length));
+                        end = new PVector(x2, y2);
+                }
+
+                break;
+
+        case "KURVE_UNTENLINKS":
+                // unten links, von unten kommend:
+                if (x2 > x1 && y2 > y1)
+                {
+                        typ = "KURVE_UNTENLINKS";
+                        println("unten links von unten kommend");
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1, y1 + (radius * length));
+                        ctrl2 = new PVector(x2 - (radius * length), y2);
+                        end = new PVector(x2, y2);
+                }
+
+                // unten links, von oben kommend:
+                else if (x2 < x1 && y2 < y1)
+                {
+                        typ = "KURVE_UNTENLINKS";
+                        println("unten links von oben kommend");
+
+                        angle = 90;
+                        // mittlere Linie:
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1 - (radius * length), y1 );
+                        ctrl2 = new PVector(x2, y2 + (radius * length));
+                        end = new PVector(x2, y2);
+                }
+                break;
+
+        case "KURVE_UNTENRECHTS":
+                if (x1 > x2 && y1 < y2)
+                {
+                        typ = "KURVE_UNTENRECHTS";
+                        println("unten rechts von unten kommend");
+
+                        angle = 90;
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1, y1 + (radius * length));
+                        ctrl2 = new PVector(x2 + (radius * length), y2);
+                        end = new PVector(x2, y2);
+                }
+                else if (x1 < x2 && y1 > y2)
+                {
+                        typ = "KURVE_UNTENRECHTS";
+                        println("unten rechts von oben kommend");
+
+                        angle = 90;
+                        radius = 65;
+                        length = 4 * tan(radians(angle / 4)) / 3;
+
+                        start = new PVector(x1, y1);
+                        ctrl1 = new PVector(x1 + (radius * length), y1 );
+                        ctrl2 = new PVector(x2, y2 + (radius * length));
+                        end = new PVector(x2, y2);
+                }
+
+                break;
+        }
+}
+
 void render(){
-        PVector start, ctrl1, ctrl2, end;
-        int angle = 180;
-        float radius = 180;
-        float length = 4 * tan(radians(angle / 4)) / 3;
 
         noFill();
         stroke(255);
@@ -61,14 +339,6 @@ void render(){
                 line(x1+10, y1, x2+10, y2);
                 break;
         case "KURVE_OBEN":
-                radius = 65/2;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1, y1 + (radius * length));
-                ctrl2 = new PVector(x2, y2 + (radius * length));
-                end = new PVector(x2, y2);
-
                 stroke(255);
                 bezier(start.x, start.y,
                        ctrl1.x, ctrl1.y,
@@ -76,19 +346,12 @@ void render(){
                        end.x, end.y);
                 break;
         case "KURVE_UNTEN":
-                radius = 65/2;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1, y1 - (radius * length));
-                ctrl2 = new PVector(x2, y2 - (radius * length));
-                end = new PVector(x2, y2);
-
                 stroke(255);
                 bezier(start.x, start.y,
                        ctrl1.x, ctrl1.y,
                        ctrl2.x, ctrl2.y,
                        end.x, end.y);
+
                 break;
         case "KURVE_LINKS":
 
@@ -136,15 +399,8 @@ void render(){
                        ctrl2.x, ctrl2.y,
                        end.x, end.y);
 
-                // Kontrollpunkte:
-                if (globalVerboseLevel > 0)
-                {
-                        noStroke();
-                        fill(193, 96, 118);
-                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
-                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
-                }
                 break;
+
         case "KURVE_RECHTS":
                 // mittlere Linie:
                 radius = 65/2;
@@ -189,54 +445,79 @@ void render(){
                        ctrl2.x, ctrl2.y,
                        end.x, end.y);
 
-                // Kontrollpunkte anzeigen:
+                break;
+
+        case "KURVE_OBENLINKS":
+                bezier(start.x, start.y,
+                       ctrl1.x, ctrl1.y,
+                       ctrl2.x, ctrl2.y,
+                       end.x, end.y);
+
+                // Kontrollpunkte:
                 if (globalVerboseLevel > 0)
                 {
                         noStroke();
                         fill(193, 96, 118);
-                        ellipse(ctrl1.x, ctrl1.y, 20, 20);
-                        ellipse(ctrl2.x, ctrl2.y, 20, 20);
+                        ellipse(ctrl1.x, ctrl1.y, 10, 10);
+                        fill(62, 147, 101);
+                        ellipse(ctrl2.x, ctrl2.y, 10, 10);
                 }
-                break;
-
-        case "KURVE_OBENLINKS":
-                angle = 90;
-                // mittlere Linie:
-                radius = 65;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1 - (radius * length), y1 );
-                ctrl2 = new PVector(x2, y2 - (radius * length));
-                end = new PVector(x2, y2);
-
-                bezier(start.x, start.y,
-                       ctrl1.x, ctrl1.y,
-                       ctrl2.x, ctrl2.y,
-                       end.x, end.y);
 
                 break;
 
         case "KURVE_OBENRECHTS":
-                angle = 90;
-                // mittlere Linie:
-                radius = 65;
-                length = 4 * tan(radians(angle / 4)) / 3;
-
-                start = new PVector(x1, y1);
-                ctrl1 = new PVector(x1 + (radius * length), y1 );
-                ctrl2 = new PVector(x2, y2 - (radius * length));
-                end = new PVector(x2, y2);
 
                 bezier(start.x, start.y,
                        ctrl1.x, ctrl1.y,
                        ctrl2.x, ctrl2.y,
                        end.x, end.y);
+
+                       // Kontrollpunkte:
+                       if (globalVerboseLevel > 0)
+                       {
+                               noStroke();
+                               fill(193, 96, 118);
+                               ellipse(ctrl1.x, ctrl1.y, 10, 10);
+                               fill(62, 147, 101);
+                               ellipse(ctrl2.x, ctrl2.y, 10, 10);
+                       }
                 break;
+
         case "KURVE_UNTENLINKS":
+                bezier(start.x, start.y,
+                       ctrl1.x, ctrl1.y,
+                       ctrl2.x, ctrl2.y,
+                       end.x, end.y);
+
+                       // Kontrollpunkte:
+                       if (globalVerboseLevel > 0)
+                       {
+                               noStroke();
+                               fill(193, 96, 118);
+                               ellipse(ctrl1.x, ctrl1.y, 10, 10);
+                               fill(62, 147, 101);
+                               ellipse(ctrl2.x, ctrl2.y, 10, 10);
+                       }
+
                 break;
+
         case "KURVE_UNTENRECHTS":
+                bezier(start.x, start.y,
+                       ctrl1.x, ctrl1.y,
+                       ctrl2.x, ctrl2.y,
+                       end.x, end.y);
+
+                       // Kontrollpunkte:
+                       if (globalVerboseLevel > 0)
+                       {
+                               noStroke();
+                               fill(193, 96, 118);
+                               ellipse(ctrl1.x, ctrl1.y, 10, 10);
+                               fill(62, 147, 101);
+                               ellipse(ctrl2.x, ctrl2.y, 10, 10);
+                       }
                 break;
+
         default:
                 break;
         }

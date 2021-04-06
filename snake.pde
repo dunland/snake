@@ -20,7 +20,7 @@ import uibooster.*;
 
 boolean record;
 int punktAbstand_x = 65, punktAbstand_y = 65;
-int globalVerboseLevel = 0;
+int globalVerboseLevel = 1;
 
 // Punktlisten:
 ArrayList<GitterPunkt> gitterpunkte = new ArrayList<GitterPunkt>();
@@ -81,29 +81,49 @@ void draw()
 // Tastaturbefehle:
 void keyPressed()
 {
+        println(key);
         //exportiere DXF mit Taste 'r':
         if (key == 'R')
         {
                 record = true;
         }
         if (key == 'W')
-        {
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBEN";
-        }
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBEN");
         if (key == 'A')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_LINKS";
         if (key == 'S')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTEN";
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTEN");
         if (key == 'D')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
         if (key == 'Q')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBENLINKS";
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBENLINKS");
         if (key == 'E')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_OBENRECHTS";
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBENRECHTS");
         if (key == 'Y')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTENLINKS";
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTENLINKS");
         if (key == 'X')
-                liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_UNTENRECHTS";
+                liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTENRECHTS");
+        if (key == ' ')
+        {
+                if (liniensegmente.get(liniensegmente.size() - 1).typ == "HORIZONTALE")
+                        liniensegmente.get(liniensegmente.size() - 1).typ = "VERTIKALE";
+                else if (liniensegmente.get(liniensegmente.size() - 1).typ == "VERTIKALE")
+                        liniensegmente.get(liniensegmente.size() - 1).typ = "HORIZONTALE";
+                else
+                        liniensegmente.get(liniensegmente.size() - 1).typ = "HORIZONTALE";
+        }
+        if (key == '+' || key == 'ȉ')
+        {
+                globalVerboseLevel++;
+                println(globalVerboseLevel);
+        }
+        if (key == '-')
+        {
+                globalVerboseLevel--;
+                println(globalVerboseLevel);
+        }
+
+
 
 
 }
