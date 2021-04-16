@@ -35,7 +35,7 @@ ArrayList<Liniensegment> liniensegmente = new ArrayList<Liniensegment>();
 void setup()
 {
         // Grafikeinstellungen:
-        size(800, 500, FX2D);
+        size(800, 500, P3D);
 
         ellipseMode(CENTER);
 
@@ -90,25 +90,25 @@ void keyPressed()
 {
         println(key);
         //exportiere DXF mit Taste 'r':
-        if (key == 'R')
+        if (key == 'R' || key == 'r')
         {
                 record = true;
         }
-        if (key == 'W')
+        if (key == 'W' || key == 'w')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBEN");
-        if (key == 'A')
+        if (key == 'A' || key == 'a')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_LINKS";
-        if (key == 'S')
+        if (key == 'S' || key == 's')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTEN");
-        if (key == 'D')
+        if (key == 'D' || key == 'd')
                 liniensegmente.get(liniensegmente.size() - 1).typ = "KURVE_RECHTS";
-        if (key == 'Q')
+        if (key == 'Q' || key == 'q')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBENLINKS");
-        if (key == 'E')
+        if (key == 'E' || key == 'e')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_OBENRECHTS");
-        if (key == 'Y')
+        if (key == 'Y' || key == 'y')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTENLINKS");
-        if (key == 'X')
+        if (key == 'X' || key == 'x')
                 liniensegmente.get(liniensegmente.size() - 1).set_type("KURVE_UNTENRECHTS");
         if (key == ' ')
         {
