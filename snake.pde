@@ -4,7 +4,7 @@
 
    TODO:
    ..Erkennung vertikale vs horizontale Verläufe
-   ....vertikale Linien: Verbindungsbögen
+   ....Bögen: doppelte Linien
    ..Benennung Maßeinheiten Wand
    ..Einfügen eines technischen Bildes
    ..Segmentierung des dxf-Exportes
@@ -12,11 +12,14 @@
    ....Liste aller Punkte, draggable
    ....Einstellung Maßeinheiten
    ....export-Button
-   ....globalVerboseLevel keyboard control
+   ..remove liniensegmente with dot removal
+   ....dot removal without bugs
  */
 
 import processing.dxf.*;
 import uibooster.*;
+
+PImage bild;
 
 boolean record;
 int punktAbstand_x = 65, punktAbstand_y = 65;
@@ -36,6 +39,8 @@ void setup()
 
         ellipseMode(CENTER);
 
+        bild = loadImage("beispielbild.jpeg");
+
         // Gitterpunkte erstellen:
         for (int x = 0; x < width; x += punktAbstand_x)
         {
@@ -49,6 +54,8 @@ void setup()
 void draw()
 {
         background(0);
+
+        image(bild, 0, 0);
         // Gitter zeichnen:
         for (GitterPunkt gp : gitterpunkte)
         {
