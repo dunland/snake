@@ -10,4 +10,5 @@ application.macosx
 out
 
 *.class
-build
+./build
+*.java
