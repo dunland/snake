@@ -1,6 +1,6 @@
 /*
-   Heizungsauslegungsgenerator v.0.1.01
-   dunland, März-Mai 2021
+   Heizungsauslegungsgenerator v.0.1.02
+   dunland, Juli 2021
 
    TODO:
    ..Raster bewegen per drag&drop
@@ -18,6 +18,9 @@
    ....export-Button
    ..remove liniensegmente with dot removal
    ....dot removal without bugs
+   ..Bild:
+   ...Bild aus Ordner auswählen
+   ...Error, wenn kein Bild geladen
  */
 
 import processing.dxf.*;
@@ -25,6 +28,7 @@ import uibooster.*;
 UiBooster ui;
 
 PImage bild;
+String bild_datei = "beispielbild.jpeg";
 String output_datei = "output.dxf";
 
 boolean record;
@@ -48,7 +52,7 @@ void setup() {
 
   ellipseMode(CENTER);
 
-  bild = loadImage("beispielbild.jpeg");
+  bild = loadImage(bild_datei);
 
   // Gitterpunkte erstellen:
   // for (int x = 0; x < width; x += punktAbstand_x * raster.scale_x) {
