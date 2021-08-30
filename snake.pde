@@ -1,6 +1,6 @@
 /*
    Heizungsauslegungsgenerator v.0.1.01
-   dunland, März 2021
+   dunland, März-Mai 2021
 
    TODO:
    ..Raster bewegen per drag&drop
@@ -88,6 +88,7 @@ void draw() {
   }
 
   if (raster.scaling_mode_is_on) {
+    stroke(raster._color);
     // Kreuz zeichnen:
     if (raster.choose_point_index < 1) {
       line(mouseX - 10, mouseY - 10, mouseX + 10, mouseY + 10);
@@ -170,7 +171,7 @@ void mouseClicked() {
           GitterPunkt gp_vorher =
               aktive_gitterpunkte.get(aktive_gitterpunkte.size() - 2);
           liniensegmente.add(
-              new Liniensegment(gp.x, gp.y, gp_vorher.x, gp_vorher.y));
+              new Liniensegment(gp, gp_vorher));
           // TODO: gp.linie = zuletzt erstelle Linie
         }
       } else {

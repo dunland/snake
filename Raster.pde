@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////// RASTER /////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
 class Raster {
 
   Raster() {}
@@ -9,12 +13,16 @@ class Raster {
   PVector[] scale_line = new PVector[2];
 
   float scale_x = 1;
+  color _color = color(255,255,255);
 
+  ////////////////////////////// FUNCTIONS //////////////////////////////////
+  // --------------------------------------------
   void enable_scaling_mode() {
     scaling_mode_is_on = true;
     choose_point_index = 0;
   }
 
+  // --------------------------------------------
   void set_scaling_point(int point_x, int point_y) {
     if (scaling_mode_is_on) {
       raster.scale_line[raster.choose_point_index] =
@@ -26,8 +34,9 @@ class Raster {
           float input = float(ui.showTextInputDialog(
               "Maße in [cm] eingeben (als float mit Dezimal-Punkt)"));
           float v_diff = scale_line[0].dist(scale_line[1]);
-            scale_x = v_diff/input;
-          println("scale_x = ", v_diff, "px /", input, "cm =", scale_x, "px/cm");
+          scale_x = v_diff / input;
+          println("scale_x = ", v_diff, "px /", input, "cm =", scale_x,
+                  "px/cm");
 
           // neue Gitterpunkte erstellen:
           gitterpunkte.clear();
@@ -39,7 +48,8 @@ class Raster {
           }
 
         } catch (Exception e) {
-          println("keine Länge eingegeben oder Länge mit falschem Format (Dezimalstellen-Punkt statt Komma verwenden!)");
+          println("keine Länge eingegeben oder Länge mit falschem Format ",
+                  "(Dezimalstellen-Punkt statt Komma verwenden!)");
         }
         scaling_mode_is_on = false;
       }
@@ -47,7 +57,9 @@ class Raster {
   }
 
 }
-
+/////////////////////////////////////////// //////////////////////////////////
+////////////////////////////// GITTERPUNKTE //////////////////////////////////
+/////////////////////////////////////////// //////////////////////////////////
 class GitterPunkt {
   int x, y;
   int x_toleranz = 10, y_toleranz = 10;
@@ -68,13 +80,13 @@ class GitterPunkt {
     if (unter_mouse) {
       noStroke();
       fill(185, 185, 185, 80);
-      ellipse(x, y, rastermass/3, rastermass/3);
+      ellipse(x, y, rastermass / 3, rastermass / 3);
     }
 
     // weißen Kreis malen, wenn aktiv:
     if (aktiv) {
       fill(255);
-      ellipse(x, y, rastermass/3, rastermass/3);
+      ellipse(x, y, rastermass / 3, rastermass / 3);
     }
   }
 

@@ -1,6 +1,7 @@
 class Liniensegment {
 
   int x1, y1, x2, y2;
+  GitterPunkt gp_start, gp_end;
   String typ = ""; // mögliche Typen: "HORIZONTALE", "VERTIKALE", "KURVE_UNTEN",
                    // "KURVE_OBEN", "KURVE_LINKS", "KURVE_RECHTS"
   PVector start, ctrl1, ctrl2, end;
@@ -8,11 +9,13 @@ class Liniensegment {
   float radius = 180;
   float length = 4 * tan(radians(angle / 4)) / 3 * raster.scale_x;
 
-  Liniensegment(int x1_, int y1_, int x2_, int y2_) {
-    x1 = x1_;
-    y1 = y1_;
-    x2 = x2_;
-    y2 = y2_;
+  Liniensegment(GitterPunkt start, GitterPunkt end) {
+    gp_start = start;
+    gp_end = end;
+    x1 = start.x;
+    y1 = start.y;
+    x2 = end.x;
+    y2 = end.y;
 
     if (aktive_gitterpunkte.size() > 1)
       typ_zuordnung();
