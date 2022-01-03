@@ -1,29 +1,41 @@
 /*
-   Heizungsauslegungsgenerator v.0.1.02
+   Heizungsauslegungsgenerator v.0.1.03
    dunland, Juli 2021
 
    TODO:
-   ..Raster bewegen per drag&drop
-   ..Raster zerschneiden??
-   ..Liniensegmente rückgängig machen
-   ..Liniensegmente an Gitterpunkte binden
-   ..Liniensegmente exportieren/speichern
-   ..Erkennung vertikale vs horizontale Verläufe
-   ..Benennung Maßeinheiten Wand
-   ..Einfügen eines technischen Bildes
-   ..Segmentierung des dxf-Exportes
-   ..UI:
-   ....Liste aller Punkte, draggable
-   ....Einstellung Maßeinheiten
-   ....export-Button
-   ..remove liniensegmente with dot removal
-   ....dot removal without bugs
-   ..Bild:
-   ...Bild aus Ordner auswählen
-   ...Error, wenn kein Bild geladen
+   - [ ] Raster bewegen per drag&drop
+   - [ ] Raster zerschneiden??
+   - [ ] Interaktion:
+       - [ ] Liniensegmente rückgängig machen
+       - [ ] Liniensegmente an Gitterpunkte binden
+       - [ ] Liniensegmente exportieren/speichern
+   - [ ] Raster:
+       - [ ] Erkennung vertikale vs horizontale Verläufe
+       - [ ] Liniensegmente bei Entfernen eines Punkts löschen
+       - [ ] Punkte entfernen ‒ ohne Fehler
+       - [ ] Benennung Maßeinheiten Wand
+       - [x] Einfügen eines technischen Bildes
+           - [ ] neu setzen der Rasterpunkte bei Laden des Bildes
+           - [ ] Fehler, wenn kein Bild geladen → Popup File Panel
+   - [ ] Export
+       - [ ] Segmentierung des dxf-Exportes
+   - [ ] UI:
+       - [ ] Liste aller Punkte, draggable
+       - [ ] Buttons:
+           - [ ] SVG Export
+           - [ ] DXF Export
+           - [ ] Bild laden
+           - [ ] Rastermaß bestimmen
+ */
+
+ /*
+ Fragen:
+ - was für ein Output für FreeCAD benötigt? Eine Linie? zwei? drei?
+ - welcher Dateityp? SVG oder DXF?
  */
 
 import processing.dxf.*;
+import processing.svg.*;
 import uibooster.*;
 
 UiBooster ui;
@@ -31,7 +43,7 @@ UiBooster ui;
 JSONObject data;
 
 PImage image;
-String output_datei = "output.dxf";
+String output_datei = "output";
 
 boolean record;
 float   rastermass = 13; // in cm
@@ -48,7 +60,7 @@ Raster raster = new Raster();
 
 void setup() {
   // Grafikeinstellungen:
-  size(800, 500);
+  size(800, 500, P3D);
   surface.setTitle("snake");
   surface.setResizable(true);
   ellipseMode(CENTER);
@@ -93,7 +105,8 @@ void draw() {
 
   // DXF Aufnahme starten:
   if (record) {
-    beginRaw(DXF, output_datei);
+    beginRaw(DXF, output_datei+".dxf");
+    beginRecord(SVG, output_datei+".svg");
   }
 
   // Formen zeichnen:
@@ -104,6 +117,7 @@ void draw() {
   // DXF Aufnahme beenden:
   if (record) {
     endRaw();
+    endRecord();
     record = false;
     println("record finished.");
   }

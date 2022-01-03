@@ -9,6 +9,9 @@ application.windows64
 application.macosx
 out
 
+*.atom-beautify.*
+
 *.class
 ./build
 *.java
+*.log
