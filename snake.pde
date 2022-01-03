@@ -3,7 +3,7 @@
    dunland, Juli 2021
 
    TODO:
-   - [ ] Raster bewegen per drag&drop
+   - [x] Raster bewegen per drag&drop
    - [ ] Raster zerschneiden??
    - [ ] Interaktion:
        - [ ] Liniensegmente rückgängig machen
@@ -28,22 +28,25 @@
            - [ ] Rastermaß bestimmen
  */
 
- /*
- Fragen:
- - was für ein Output für FreeCAD benötigt? Eine Linie? zwei? drei?
- - welcher Dateityp? SVG oder DXF?
+/*
+   Fragen:
+   - was für ein Output für FreeCAD benötigt? Eine Linie? zwei? drei?
+   - welcher Dateityp? SVG oder DXF?
  */
 
 import processing.dxf.*;
 import processing.svg.*;
 import uibooster.*;
 
+// interaction
 UiBooster ui;
+boolean   spaceHold;
+PVector   mousePosition;
 
+// data
 JSONObject data;
-
-PImage image;
-String output_datei = "output";
+PImage     image;
+String     output_datei = "output";
 
 boolean record;
 float   rastermass = 13; // in cm
@@ -55,8 +58,8 @@ ArrayList<GitterPunkt> aktive_gitterpunkte = new ArrayList<GitterPunkt>();
 
 // Liniensegmente:
 ArrayList<Liniensegment> liniensegmente = new ArrayList<Liniensegment>();
+Raster raster                           = new Raster();
 
-Raster raster = new Raster();
 
 void setup() {
   // Grafikeinstellungen:
@@ -66,11 +69,13 @@ void setup() {
   ellipseMode(CENTER);
 
   // Interaktion
-  ui = new UiBooster();
+  ui            = new UiBooster();
+  mousePosition = new PVector(0, 0);
 
   // Lade initiale Daten:
   data = new JSONObject();
-  load_data_profile("settings.json", data);
+  JSONObject settings = loadJSONObject("settings.json");
+  data.setString("image_file", settings.getString("image_file"));
 
   try {
     image = loadImage(data.getString("image_file"));
@@ -83,12 +88,24 @@ void setup() {
       print(f, "image could not be loaded.");
     }
   }
-  // Gitterpunkte erstellen:
-  // for (int x = 0; x < width; x += punktAbstand_x * raster.scale_x) {
-  //   for (int y = 0; y < width; y += punktAbstand_y * raster.scale_x) {
-  //     raster.gitterpunkte.add(new GitterPunkt(x, y));
-  //   }
-  // }
+
+  // lade rastermass aus json:
+  try {
+    if (settings.getFloat("scale_x") != 0)
+    {
+      raster.scale_x = settings.getFloat("scale_x");
+      println("Raster hat folgendes Maß: ", raster.scale_x);
+      // Gitterpunkte erstellen:
+      for (int x = 0; x < width; x += punktAbstand_x * raster.scale_x) {
+        for (int y = 0; y < width; y += punktAbstand_y * raster.scale_x) {
+          raster.gitterpunkte.add(new GitterPunkt(x, y));
+        }
+      }
+    }
+  } catch(Exception e) {
+    println(e);
+    raster.enable_scaling_mode();
+  }
 }
 
 void draw() {
@@ -100,13 +117,22 @@ void draw() {
   for (GitterPunkt gp : raster.gitterpunkte) {
     gp.checkMouseOverlap();
 
-    if (!record) gp.render();
+    // render grid points:
+    if (!record) {
+      if (spaceHold)
+      {
+        gp.render(gp.x + int(mouseX - mousePosition.x),
+                  gp.y + int(mouseY - mousePosition.y));
+        line(mousePosition.x, mousePosition.y, mouseX, mouseY);
+      }
+      else gp.render(gp.x, gp.y);
+    }
   }
 
   // DXF Aufnahme starten:
   if (record) {
-    beginRaw(DXF, output_datei+".dxf");
-    beginRecord(SVG, output_datei+".svg");
+    beginRaw(DXF, output_datei + ".dxf");
+    beginRecord(SVG, output_datei + ".svg");
   }
 
   // Formen zeichnen:
@@ -175,16 +201,28 @@ void keyPressed() {
       liniensegmente.size() - 1).set_type("KURVE_UNTENLINKS");
   else if ((key == 'X') || (key == 'x')) liniensegmente.get(
       liniensegmente.size() - 1).set_type("KURVE_UNTENRECHTS");
-  else if (key == ' ') {
-    if (liniensegmente.get(liniensegmente.size() - 1).typ ==
-        "HORIZONTALE") liniensegmente.get(liniensegmente.size() -
-                                          1).typ = "VERTIKALE";
-    else if (liniensegmente.get(liniensegmente.size() - 1).typ ==
-             "VERTIKALE") liniensegmente.get(liniensegmente.size() -
-                                             1).typ = "HORIZONTALE";
-    else liniensegmente.get(liniensegmente.size() - 1).typ = "HORIZONTALE";
+
+  if (key == CODED)
+  {
+    if (keyCode == TAB) {
+      if (liniensegmente.get(liniensegmente.size() - 1).typ ==
+          "HORIZONTALE") liniensegmente.get(liniensegmente.size() -
+                                            1).typ = "VERTIKALE";
+      else if (liniensegmente.get(liniensegmente.size() - 1).typ ==
+               "VERTIKALE") liniensegmente.get(liniensegmente.size() -
+                                               1).typ = "HORIZONTALE";
+      else liniensegmente.get(liniensegmente.size() - 1).typ = "HORIZONTALE";
+    }
   }
 
+  if (key == ' ')
+  {
+    if (spaceHold == false)
+    {
+      spaceHold     = true;
+      mousePosition = new PVector(mouseX, mouseY);
+    }
+  }
 
   else if ((key == '+') || (key == 'ȉ')) {
     globalVerboseLevel++;
@@ -200,7 +238,9 @@ void keyPressed() {
     try {
       File file = ui.showFileSelection();
       image = loadImage(file.getAbsolutePath());
-      image.resize(width, image.width/width * image.height);
+      image.resize(width, image.width / width * image.height);
+      data.setString("image_file", file.getAbsolutePath());
+      saveJSONObject(data, "settings.json");
     } catch (Exception e) {
       print("cannot load file!", e);
     }
@@ -212,10 +252,23 @@ void keyPressed() {
   }
 }
 
+void keyReleased()
+{
+  if (key == ' ')
+  {
+    for (GitterPunkt gp : raster.gitterpunkte)
+    {
+      gp.x = int(gp.x + mouseX - mousePosition.x);
+      gp.y = int(gp.y + mouseY - mousePosition.y);
+    }
+    spaceHold = false;
+  }
+}
+
 // Mausklick:
 void mouseClicked() {
   // Gitterpunkt an Stelle der Maus auswählen:
-  if (raster.scaling_mode_is_on == false)
+  if ((raster.scaling_mode_is_on == false) && !spaceHold)
   {
     for (int i = 0; i < raster.gitterpunkte.size(); i++) {
       GitterPunkt gp = raster.gitterpunkte.get(i);
