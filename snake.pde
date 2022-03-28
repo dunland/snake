@@ -1,32 +1,41 @@
 /*
-Heizungsauslegungsgenerator v.0.1.02
-dunland, Juli 2021
+   Heizungsauslegungsgenerator v.0.1.03
+   dunland, Juli 2021
 
-TODO:
-..Raster bewegen per drag&drop
-..Raster zerschneiden??
-..Liniensegmente rückgängig machen
-..Liniensegmente an Gitterpunkte binden
-..Liniensegmente exportieren/speichern
-..Erkennung vertikale vs horizontale Verläufe
-..Benennung Maßeinheiten Wand
-..Einfügen eines technischen Bildes
-..Segmentierung des dxf-Exportes
+   TODO:
+   - [x] Raster bewegen per drag&drop
+   - [ ] Raster zerschneiden??
+   - [ ] Interaktion:
+       - [ ] Liniensegmente rückgängig machen
+       - [ ] Liniensegmente an Gitterpunkte binden
+       - [ ] Liniensegmente exportieren/speichern
+   - [ ] Raster:
+       - [ ] Erkennung vertikale vs horizontale Verläufe
+       - [ ] Liniensegmente bei Entfernen eines Punkts löschen
+       - [ ] Punkte entfernen ‒ ohne Fehler
+       - [ ] Benennung Maßeinheiten Wand
+       - [x] Einfügen eines technischen Bildes
+           - [ ] neu setzen der Rasterpunkte bei Laden des Bildes
+           - [ ] Fehler, wenn kein Bild geladen → Popup File Panel
+   - [ ] Export
+       - [ ] Segmentierung des dxf-Exportes
+   - [ ] UI:
+       - [ ] Liste aller Punkte, draggable
+       - [ ] Buttons:
+           - [ ] SVG Export
+           - [ ] DXF Export
+           - [ ] Bild laden
+           - [ ] Rastermaß bestimmen
+ */
 
-..UI:
-....Liste aller Punkte, draggable
-....Einstellung Maßeinheiten
-....export-Button
-
-..remove liniensegmente with dot removal
-....dot removal without bugs
-
-..Bild:
-...Bild aus Ordner auswählen
-...Error, wenn kein Bild geladen
-*/
+/*
+   Fragen:
+   - was für ein Output für FreeCAD benötigt? Eine Linie? zwei? drei?
+   - welcher Dateityp? SVG oder DXF?
+ */
 
 import processing.dxf.*;
+import processing.svg.*;
 import uibooster.*;
 import drop.*;
 
@@ -41,9 +50,9 @@ String settings_datei = "settings.json";
 JSONObject settings;
 
 boolean record;
-float rastermass = 13; // in cm
-float punktAbstand_x = rastermass, punktAbstand_y = rastermass;
-int globalVerboseLevel = 0;
+float   rastermass = 13; // in cm
+float   punktAbstand_x = rastermass, punktAbstand_y = rastermass;
+int     globalVerboseLevel = 0;
 
 String MODE; // can be "RUNNING" or "SETUP"
 
@@ -52,8 +61,8 @@ ArrayList<GitterPunkt> aktive_gitterpunkte = new ArrayList<GitterPunkt>();
 
 // Liniensegmente:
 ArrayList<Liniensegment> liniensegmente = new ArrayList<Liniensegment>();
+Raster raster                           = new Raster();
 
-Raster raster = new Raster();
 
 void setup() {
     //Grafikeinstellungen:
