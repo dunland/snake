@@ -1,6 +1,6 @@
 /*
-   Heizungsauslegungsgenerator v.0.1.03
-   dunland, Juli 2021
+   Heizungsauslegungsgenerator v.0.1.03a
+   dunland, März 2022
 
    TODO:
    - [x] Raster bewegen per drag&drop
@@ -37,13 +37,12 @@
 import processing.dxf.*;
 import processing.svg.*;
 import uibooster.*;
-import drop.*;
 
 UiBooster ui;
-SDrop drop;
 
 PImage bild;
-String bild_datei;
+String bild_pfad;
+File bild_datei;
 String output_datei = "output.dxf";
 String settings_datei = "settings.json";
 
@@ -63,13 +62,13 @@ ArrayList<GitterPunkt> aktive_gitterpunkte = new ArrayList<GitterPunkt>();
 ArrayList<Liniensegment> liniensegmente = new ArrayList<Liniensegment>();
 Raster raster                           = new Raster();
 
+boolean FLAG_GET_IMAGE_DIALOG = false;
 
 void setup() {
     //Grafikeinstellungen:
     size(800, 500, P3D);
 
     ui = new UiBooster();
-    drop = new SDrop(this);
 
     ellipseMode(CENTER);
 
@@ -77,11 +76,11 @@ void setup() {
     // try loading data, otherwise go to SETUP:
     try {
         settings = loadJSONObject("settings.json");
-        bild_datei = settings.getString("bild_datei");
-        if (!bild_datei.equals(""))
+        bild_pfad = settings.getString("bild_pfad");
+        if (!bild_pfad.equals(""))
         {
-            bild = loadImage(bild_datei);
-            println(bild_datei);
+            bild = loadImage(bild_pfad);
+            println(bild_pfad);
             println(bild);
             MODE = "RUNNING";
         }
@@ -89,11 +88,13 @@ void setup() {
         {
             MODE = "SETUP";
             println("Bild-Dateipfad ist leer.");
+            FLAG_GET_IMAGE_DIALOG = true;            
         }
 
     } catch(Exception e) {
         print(e, "Bitte Eintellungen eigenhändig vornehmen.");
         MODE = "SETUP";
+        FLAG_GET_IMAGE_DIALOG = true;
     }
     println("entering", MODE);
 

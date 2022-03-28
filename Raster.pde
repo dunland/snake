@@ -37,8 +37,8 @@ class Raster {
           scale_x = v_diff / input;
           println("scale_x = ", v_diff, "px /", input, "cm =", scale_x,
                   "px/cm");
-          data.setFloat("scale_x", scale_x);
-          saveJSONObject(data, "settings.json");          
+          settings.setFloat("scale_x", scale_x);
+          saveJSONObject(settings, "settings.json");
 
           // neue Gitterpunkte erstellen:
           gitterpunkte.clear();
@@ -73,22 +73,22 @@ class GitterPunkt {
     y = y_;
   }
 
-  void render(int xpos, int ypos) {
+  void render() {
     // weißen Gitterpunkt malen:
     stroke(255);
-    point(xpos, ypos);
+    point(x, y);
 
     // grauen Kreis malen, wenn Maus in der Nähe:
     if (unter_mouse) {
       noStroke();
       fill(185, 185, 185, 80);
-      ellipse(xpos, ypos, rastermass / 3, rastermass / 3);
+      ellipse(x, y, rastermass / 3, rastermass / 3);
     }
 
     // weißen Kreis malen, wenn aktiv:
     if (aktiv) {
       fill(255);
-      ellipse(xpos, ypos, rastermass / 3, rastermass / 3);
+      ellipse(x, y, rastermass / 3, rastermass / 3);
     }
   }
 
